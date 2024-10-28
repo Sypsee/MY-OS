@@ -9,7 +9,7 @@
 namespace {
 
 __attribute__((used, section(".requests")))
-volatile LIMINE_BASE_REVISION(2);
+volatile LIMINE_BASE_REVISION(3);
 
 }
 
