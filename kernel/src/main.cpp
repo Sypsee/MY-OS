@@ -8,7 +8,7 @@
 
 namespace {
 
-__attribute__((used, section(".requests")))
+__attribute__((used, section(".limine_requests")))
 volatile LIMINE_BASE_REVISION(3);
 
 }
@@ -20,7 +20,7 @@ volatile LIMINE_BASE_REVISION(3);
 
 namespace {
 
-__attribute__((used, section(".requests")))
+__attribute__((used, section(".limine_requests")))
 volatile limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
     .revision = 0,
@@ -34,10 +34,10 @@ volatile limine_framebuffer_request framebuffer_request = {
 
 namespace {
 
-__attribute__((used, section(".requests_start_marker")))
+__attribute__((used, section(".limine_requests_start")))
 volatile LIMINE_REQUESTS_START_MARKER;
 
-__attribute__((used, section(".requests_end_marker")))
+__attribute__((used, section(".limine_requests_end")))
 volatile LIMINE_REQUESTS_END_MARKER;
 
 }
