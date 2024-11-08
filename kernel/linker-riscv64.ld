@@ -48,7 +48,7 @@ SECTIONS
     /* address of the ".init_array" section we need to define a symbol for it. */
     .init_array : {
         __init_array = .;
-        *(.init_array .init_array.*)
+        KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
         __init_array_end = .;
     } :rodata
 
