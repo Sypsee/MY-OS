@@ -8,15 +8,15 @@ This repository will demonstrate how to set up a basic kernel in C++ using Limin
 
 Any `make` command depends on GNU make (`gmake`) and is expected to be run using it. This usually means using `make` on most GNU/Linux distros, or `gmake` on other non-GNU systems.
 
-It is recommended to build this project using a standard UNIX-like system, using a Clang/LLVM toolchain capable of cross compilation (the default, unless `KCC`/`KCXX` and/or `KLD` are explicitly set).
+It is recommended to build this project using a standard UNIX-like system, using a Clang/LLVM toolchain capable of cross compilation (the default, unless `CC`/`CXX` and/or `LD` are explicitly set).
 
 Additionally, building an ISO with `make all` requires `xorriso`, and building a HDD/USB image with `make all-hdd` requires `sgdisk` (usually from `gdisk` or `gptfdisk` packages) and `mtools`.
 
 ### Architectural targets
 
-The `KARCH` make variable determines the target architecture to build the kernel and image for.
+The `ARCH` make variable determines the target architecture to build the kernel and image for.
 
-The default `KARCH` is `x86_64`. Other options include: `aarch64`, `loongarch64`, and `riscv64`.
+The default `ARCH` is `x86_64`. Other options include: `aarch64`, `loongarch64`, and `riscv64`.
 
 ### Makefile targets
 
