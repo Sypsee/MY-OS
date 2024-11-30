@@ -77,6 +77,7 @@ override CPPFLAGS_C := \
     -I src \
     -isystem freestnd-c-hdrs/$(ARCH)/include \
     $(CPPFLAGS) \
+    -DLIMINE_API_REVISION=1 \
     -MMD \
     -MP
 
@@ -86,6 +87,7 @@ override CPPFLAGS_CXX := \
     -isystem freestnd-c-hdrs/$(ARCH)/include \
     -isystem freestnd-cxx-hdrs/$(ARCH)/include \
     $(CPPFLAGS) \
+    -DLIMINE_API_REVISION=1 \
     -MMD \
     -MP
 
@@ -215,7 +217,7 @@ override HEADER_DEPS := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.d) $(CXXFILES:.c
 all: bin-$(ARCH)/$(OUTPUT)
 
 # Link rules for building the C compiler runtime.
-cc-runtime-$(ARCH)/cc-runtime.a: cc-runtime/*
+cc-runtime-$(ARCH)/cc-runtime.a: GNUmakefile cc-runtime/*
 	rm -rf cc-runtime-$(ARCH)
 	cp -r cc-runtime cc-runtime-$(ARCH)
 	$(MAKE) -C cc-runtime-$(ARCH) -f cc-runtime.mk \
