@@ -200,11 +200,12 @@ override LDFLAGS += \
 
 # Use "find" to glob all *.c, *.cpp, *.S, and *.asm files in the tree and obtain the
 # object and header dependency file names.
-override CFILES := $(shell cd src && find -L * -type f -name '*.c' | LC_ALL=C sort)
-override CXXFILES := $(shell cd src && find -L * -type f -name '*.cpp' | LC_ALL=C sort)
-override ASFILES := $(shell cd src && find -L * -type f -name '*.S' | LC_ALL=C sort)
+override SRCFILES := $(shell cd src && find -L * -type f | LC_ALL=C sort)
+override CFILES := $(filter %.c,$(SRCFILES))
+override CXXFILES := $(filter %.cpp,$(SRCFILES))
+override ASFILES := $(filter %.S,$(SRCFILES))
 ifeq ($(ARCH),x86_64)
-override NASMFILES := $(shell cd src && find -L * -type f -name '*.asm' | LC_ALL=C sort)
+override NASMFILES := $(filter %.asm,$(SRCFILES))
 endif
 override OBJ := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.o) $(CXXFILES:.cpp=.cpp.o) $(ASFILES:.S=.S.o))
 ifeq ($(ARCH),x86_64)
@@ -212,9 +213,12 @@ override OBJ += $(addprefix obj-$(ARCH)/,$(NASMFILES:.asm=.asm.o))
 endif
 override HEADER_DEPS := $(addprefix obj-$(ARCH)/,$(CFILES:.c=.c.d) $(CXXFILES:.cpp=.cpp.d) $(ASFILES:.S=.S.d))
 
-# Default target.
+# Default target. This must come first, before header dependencies.
 .PHONY: all
 all: bin-$(ARCH)/$(OUTPUT)
+
+# Include header dependencies.
+-include $(HEADER_DEPS)
 
 # Link rules for building the C compiler runtime.
 cc-runtime-$(ARCH)/cc-runtime.a: GNUmakefile cc-runtime/*
@@ -230,9 +234,6 @@ cc-runtime-$(ARCH)/cc-runtime.a: GNUmakefile cc-runtime/*
 bin-$(ARCH)/$(OUTPUT): GNUmakefile linker-$(ARCH).ld $(OBJ) cc-runtime-$(ARCH)/cc-runtime.a
 	mkdir -p "$$(dirname $@)"
 	$(LD) $(OBJ) cc-runtime-$(ARCH)/cc-runtime.a $(LDFLAGS) -o $@
-
-# Include header dependencies.
--include $(HEADER_DEPS)
 
 # Compilation rules for *.c files.
 obj-$(ARCH)/%.c.o: src/%.c GNUmakefile
