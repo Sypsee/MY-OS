@@ -73,7 +73,7 @@ override CPPFLAGS_C := \
     -I src \
     -isystem freestnd-c-hdrs/$(ARCH)/include \
     $(CPPFLAGS) \
-    -DLIMINE_API_REVISION=2 \
+    -DLIMINE_API_REVISION=3 \
     -MMD \
     -MP
 
@@ -83,7 +83,7 @@ override CPPFLAGS_CXX := \
     -isystem freestnd-c-hdrs/$(ARCH)/include \
     -isystem freestnd-cxx-hdrs/$(ARCH)/include \
     $(CPPFLAGS) \
-    -DLIMINE_API_REVISION=2 \
+    -DLIMINE_API_REVISION=3 \
     -MMD \
     -MP
 
