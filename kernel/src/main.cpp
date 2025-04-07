@@ -50,9 +50,9 @@ volatile LIMINE_REQUESTS_END_MARKER;
 
 extern "C" {
 
-void *memcpy(void *dest, const void *src, std::size_t n) {
-    std::uint8_t *pdest = static_cast<std::uint8_t *>(dest);
-    const std::uint8_t *psrc = static_cast<const std::uint8_t *>(src);
+void *memcpy(void *__restrict dest, const void *__restrict src, std::size_t n) {
+    std::uint8_t *__restrict pdest = static_cast<std::uint8_t *__restrict>(dest);
+    const std::uint8_t *__restrict psrc = static_cast<const std::uint8_t *__restrict>(src);
 
     for (std::size_t i = 0; i < n; i++) {
         pdest[i] = psrc[i];
