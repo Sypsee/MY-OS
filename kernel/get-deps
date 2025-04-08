@@ -67,12 +67,12 @@ download_by_hash() {
 clone_repo_commit \
     https://codeberg.org/osdev/freestnd-c-hdrs.git \
     freestnd-c-hdrs \
-    21b59ecd6ef67bb32f893da8288ce08a324d1986
+    4039f438fb1dc1064d8e98f70e1cf122f91b763b
 
 clone_repo_commit \
     https://codeberg.org/osdev/freestnd-cxx-hdrs.git \
     freestnd-cxx-hdrs \
-    d604a4c5033a7a4d610ba41daab3c541be96b43e
+    85096df5361a4d7ef2ce46947e555ec248c2858e
 
 clone_repo_commit \
     https://codeberg.org/osdev/cc-runtime.git \
