@@ -1,13 +1,12 @@
 # This is hobby os (MY OS or something)
 
-<h2>Currently has :-</h2>
-- logger
-- GDT
+## Currently has :-
+* **GDT**
 
-<h2>Adding :-</h2>
-- IDT
+## Adding
+* **IDT**
 
-<h2>Tools used :-</h2>
-- limine: <https://github.com/limine-bootloader/limine>
-- flanterm: <https://codeberg.org/mintsuki/flanterm>
-- printf impl: <https://github.com/eyalroz/printf/>
+## Tools used
+* **LIMINE**: <https://github.com/limine-bootloader/limine>
+* **FLANTERM**: <https://codeberg.org/mintsuki/flanterm>
+* **PRINTF IMPLEMENTATION**: <https://github.com/eyalroz/printf/>
