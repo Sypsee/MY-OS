@@ -11,7 +11,7 @@ GDT_Entry g_GDT[] =
     (
         0,
         0xFFFFF,
-        PRESENT | RING0 | CODE_SEGMENT | CODE_READABLE,
+        GDT_FLAG_PRESENT | GDT_FLAG_RING0 | CODE_SEGMENT | CODE_READABLE,
         BIT_64 | GRANULARITY_4K
     ),
 
@@ -20,7 +20,7 @@ GDT_Entry g_GDT[] =
     (
         0,
         0xFFFFF,
-        PRESENT | RING0 | DATA_SEGMENT | DATA_WRITABLE,
+        GDT_FLAG_PRESENT | GDT_FLAG_RING0 | DATA_SEGMENT | DATA_WRITABLE,
         BIT_64 | GRANULARITY_4K
     ),
 };
@@ -59,5 +59,5 @@ void setup_gdt()
 
     __asm__ volatile("sti");
 
-    log(INFO, "GDT INITIALIZED!\n");
+    log(INFO, "GDT INITIALIZED!, Base: %p\n", g_GDT_Descriptor.ptr);
 }

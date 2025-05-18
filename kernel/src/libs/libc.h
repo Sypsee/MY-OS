@@ -54,17 +54,4 @@ int memcmp(const void *s1, const void *s2, std::size_t n) {
 
 	return 0;
 }
-
-std::size_t strlen(const char* msg)
-{
-	size_t s = 0;
-	if (!msg) return 0;
-
-	while (msg[s] != '\0')
-	{
-		s++;
-	}
-
-	return s;
-}
 }

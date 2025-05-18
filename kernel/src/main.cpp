@@ -5,6 +5,7 @@
 #include <libs/flanterm/backends/fb.h>
 
 #include "core/gdt.h"
+#include "core/idt.h"
 
 namespace
 {
@@ -71,6 +72,7 @@ extern "C" void kmain()
 	);
 
 	setup_gdt();
+	setup_idt();
 
 	hcf();
 }

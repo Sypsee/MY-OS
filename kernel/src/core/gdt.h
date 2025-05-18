@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <stdint.h>
 
 struct __attribute__((packed)) GDT_Entry
 {
@@ -32,12 +32,12 @@ enum GDT_ACCESS
 
     DESCRIPTOR_TSS = 0x00,
 
-    RING0 = 0x00,
-    RING1 = 0x20,
-    RING2 = 0x40,
-    RING3 = 0x60,
+    GDT_FLAG_RING0 = 0x00,
+    GDT_FLAG_RING1 = 0x20,
+    GDT_FLAG_RING2 = 0x40,
+    GDT_FLAG_RING3 = 0x60,
 
-    PRESENT = 0x80,
+    GDT_FLAG_PRESENT = 0x80,
 };
 
 enum GDT_FLAGS
