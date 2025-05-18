@@ -21,7 +21,6 @@ struct __attribute__((packed)) IDT_Descriptor
 
 enum IDT_Flags
 {
-    GATE_TASK = 0x05,
     GATE_16BIT_INT = 0x6,
     GATE_16BIT_TRAP = 0x7,
     GATE_32BIT_INT = 0xE,
@@ -35,18 +34,20 @@ enum IDT_Flags
     IDT_FLAG_PRESENT = 0x80,
 };
 
-struct __attribute__((packed)) register_ctx
+struct __attribute__((packed)) stack_frame
 {
-    uint64_t es, ds;
-    uint64_t cr4, cr3, cr2, cr0;
-    uint64_t r15, r14, r13, r12, r11, r10, r9, r8, rsi, rdi, rbp, rdx, rcx, rbx, rax;
+    uint64_t r15, r14, r13, r12, r11, r10, r9, r8, rdi, rsi, rbp, rbx, rdx, rcx, rax;
     uint64_t vector, err;
     uint64_t rip, cs, rflags, rsp, ss;
 };
 
-extern "C" void exception_handler(uint64_t interrupt);
+extern "C" void _ExceptionHandler(stack_frame* frame);
 
-void IDT_SetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags);
-void IDT_Enable_Gate(int interrupt);
-void IDT_Disable_Gate(int interrupt);
-void setup_idt();
+class IDT
+{
+public:
+    static void Init();
+    static void IDTSetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags);
+    static void IDTEnableGate(int interrupt);
+    static void IDTDisableGate(int interrupt);
+};

@@ -65,4 +65,8 @@ enum GDT_FLAGS
     GDT_BASE_HIGH(base), \
 }
 
-void setup_gdt();
+class GDT
+{
+public:
+    static void Init();
+};

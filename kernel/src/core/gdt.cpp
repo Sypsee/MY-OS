@@ -30,7 +30,7 @@ GDT_Descriptor g_GDT_Descriptor = {
     g_GDT
 };
 
-void setup_gdt()
+void GDT::Init()
 {
     __asm__ volatile("cli");
     __asm__ volatile("lgdt %0" :: "m"(g_GDT_Descriptor): "memory");

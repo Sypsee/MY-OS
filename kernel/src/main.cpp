@@ -71,9 +71,8 @@ extern "C" void kmain()
 		0
 	);
 
-	setup_gdt();
-	setup_idt();
+	GDT::Init();
+	IDT::Init();
 
 	hcf();
 }
-

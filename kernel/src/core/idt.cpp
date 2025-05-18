@@ -9,7 +9,7 @@ static IDT_Descriptor g_IDT_Descriptor = {
 };
 extern void* stubs[];
 
-static const char *interrupt_strings[32] = {
+static const char *interrupt_errors[32] = {
     "Division by Zero",
     "Debug",
     "Non-Maskable-Interrupt",
@@ -45,18 +45,16 @@ static const char *interrupt_strings[32] = {
 };
 
 __attribute__((noreturn))
-extern "C" void exception_handler(uint64_t interrupt)
+extern "C" void _ExceptionHandler(stack_frame* frame)
 {
-    if (interrupt < 32)
-        log(PANIC, "Exception : %llu: %s\n", interrupt, interrupt_strings[interrupt]);
-    else
-        log(PANIC, "Unkown exception : %llu\n", interrupt);
+    if (frame->vector > 31) log(PANIC, "Unhandled exception! : %llu", frame->vector);
+    log(PANIC, "Exception : %llu, %s\n", frame->vector, interrupt_errors[frame->vector]);
 
     __asm__ volatile("cli");
     for(;;) __asm__ volatile ("hlt");
 }
 
-void IDT_SetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags)
+void IDT::IDTSetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags)
 {
     g_IDT[interrupt].base_low = (uint64_t)base & 0xFFFF;
     g_IDT[interrupt].base_middle = ((uint64_t)base >> 16) & 0xFFFF;
@@ -67,21 +65,21 @@ void IDT_SetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint
     g_IDT[interrupt].reserved = 0;
 }
 
-void IDT_Enable_Gate(int interrupt)
+void IDT::IDTEnableGate(int interrupt)
 {
     g_IDT[interrupt].flags |= (IDT_FLAG_PRESENT);
 }
 
-void IDT_Disable_Gate(int interrupt)
+void IDT::IDTDisableGate(int interrupt)
 {
     g_IDT[interrupt].flags &= ~(IDT_FLAG_PRESENT);
 }
 
-void setup_idt()
+void IDT::Init()
 {
     for (uint8_t interrupt = 0; interrupt < 32; interrupt++)
     {
-        IDT_SetGate(interrupt, stubs[interrupt], 0x08, GATE_32BIT_TRAP | IDT_FLAG_PRESENT);
+        IDTSetGate(interrupt, stubs[interrupt], 0x08, GATE_32BIT_TRAP | IDT_FLAG_PRESENT);
     }
 
     __asm__ volatile("lidt %0" :: "m"(g_IDT_Descriptor): "memory");
