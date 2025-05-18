@@ -4,7 +4,7 @@
 __attribute__((aligned(0x10)))
 static IDT_Entry g_IDT[256];
 static IDT_Descriptor g_IDT_Descriptor = {
-    sizeof(IDT_Entry) - 1,
+    sizeof(g_IDT) - 1,
     g_IDT
 };
 extern void* stubs[];
@@ -48,11 +48,12 @@ __attribute__((noreturn))
 extern "C" void exception_handler(uint64_t interrupt)
 {
     if (interrupt < 32)
-        log(PANIC, "Exception : %llu: %s", interrupt, interrupt_strings[interrupt]);
+        log(PANIC, "Exception : %llu: %s\n", interrupt, interrupt_strings[interrupt]);
     else
-        log(PANIC, "Unkown exception : %llu", interrupt);
+        log(PANIC, "Unkown exception : %llu\n", interrupt);
 
-    __asm__ volatile ("cli; hlt");
+    __asm__ volatile("cli");
+    for(;;) __asm__ volatile ("hlt");
 }
 
 void IDT_SetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags)
@@ -87,6 +88,4 @@ void setup_idt()
     __asm__ volatile("sti");
 
     log(INFO, "IDT INITIALIZED!, Base: %p\n", g_IDT_Descriptor.ptr);
-    log(WARN, "Trigger division by 0");
-    volatile int a = 1/0;
 }
