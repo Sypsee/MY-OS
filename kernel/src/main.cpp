@@ -1,11 +1,14 @@
 #include <limine.h>
 #include <libs/libc.h>
-#include <libs/printf.h>
 #include <libs/flanterm/flanterm.h>
 #include <libs/flanterm/backends/fb.h>
 
+#include "core/io.h"
 #include "core/gdt.h"
 #include "core/idt.h"
+#include "core/irq.h"
+
+#include <utils/logger.h>
 
 namespace
 {
@@ -45,7 +48,6 @@ void putchar_(char c) {
     flanterm_write(g_ft_ctx, str, 1);
 }
 
-
 extern "C" void kmain()
 {
 	if (framebuffer_request.response == nullptr ||
@@ -70,9 +72,28 @@ extern "C" void kmain()
 		0, 0,
 		0
 	);
+	if (!IO::Init())
+		log(INFO, "Failed to initialize IO(Port)!\n");
+	else
+		log(INFO, "IO(Port) - Initialized!\n");
 
 	GDT::Init();
 	IDT::Init();
+	IRQ::Init();
+
+	// greeting text
+	printf("\n\n");
+	printf("\033[92m");
+	printf("<-. (`-')                              (`-').-> \n");
+	printf("	\(OO )_      .->            .->    ( OO)_   \n");
+	printf("),--./  ,-.) ,--.'  ,-.    (`-')----. (_)--\_)  \n");
+	printf("|   `.'   |(`-')'.'  /    ( OO).-.  '/    _ /  \n");
+	printf("|  |'.'|  |(OO \    /     ( _) | |  |\_..`--.  \n");
+	printf("|  |   |  | |  /   /)      \|  |)|  |.-._)   \ \n");
+	printf("|  |   |  | `-/   /`        '  '-'  '\       / \n");
+	printf("`--'   `--'   `--'           `-----'  `-----'  \n");
+	printf("\033[0m");
+	printf("--- Welcome to MY OS! ---\n\n");
 
 	hcf();
 }

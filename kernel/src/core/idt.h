@@ -42,6 +42,7 @@ struct __attribute__((packed)) stack_frame
 };
 
 extern "C" void _ExceptionHandler(stack_frame* frame);
+using ISR_Handler = void(*)(stack_frame* frame);
 
 class IDT
 {
@@ -50,4 +51,5 @@ public:
     static void IDTSetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags);
     static void IDTEnableGate(int interrupt);
     static void IDTDisableGate(int interrupt);
+    static void RegisterHandler(int interrupt, ISR_Handler handler);
 };

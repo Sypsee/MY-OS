@@ -8,6 +8,7 @@ static IDT_Descriptor g_IDT_Descriptor = {
     g_IDT
 };
 extern void* stubs[];
+ISR_Handler g_ISRHandlers[256];
 
 static const char *interrupt_errors[32] = {
     "Division by Zero",
@@ -47,11 +48,14 @@ static const char *interrupt_errors[32] = {
 __attribute__((noreturn))
 extern "C" void _ExceptionHandler(stack_frame* frame)
 {
-    if (frame->vector > 31) log(PANIC, "Unhandled exception! : %llu", frame->vector);
-    log(PANIC, "Exception : %llu, %s\n", frame->vector, interrupt_errors[frame->vector]);
-
-    __asm__ volatile("cli");
-    for(;;) __asm__ volatile ("hlt");
+    if (g_ISRHandlers[frame->vector] != NULL)
+        g_ISRHandlers[frame->vector](frame);
+    else if (frame->vector > 31)
+        log(WARN, "Unhandled exception! : %llu\n", frame->vector);
+    else
+        log(PANIC, "Exception : %llu, %s\n", frame->vector, interrupt_errors[frame->vector]);
+        __asm__ volatile("cli");
+        for(;;) __asm__ volatile ("hlt");
 }
 
 void IDT::IDTSetGate(uint8_t interrupt, void* base, uint16_t segmentDescriptor, uint8_t flags)
@@ -75,15 +79,24 @@ void IDT::IDTDisableGate(int interrupt)
     g_IDT[interrupt].flags &= ~(IDT_FLAG_PRESENT);
 }
 
+void IDT::RegisterHandler(int interrupt, ISR_Handler handler)
+{
+    g_ISRHandlers[interrupt] = handler;
+    IDTEnableGate(interrupt);
+}
+
 void IDT::Init()
 {
     for (uint8_t interrupt = 0; interrupt < 32; interrupt++)
-    {
         IDTSetGate(interrupt, stubs[interrupt], 0x08, GATE_32BIT_TRAP | IDT_FLAG_PRESENT);
-    }
+
+    for (uint16_t interrupt = 32; interrupt < 256; interrupt++)
+        IDTSetGate(interrupt, stubs[interrupt], 0x08, GATE_32BIT_INT | IDT_FLAG_PRESENT);
+
+    IDTDisableGate(0x80); // Disable syscalls until implemented
 
     __asm__ volatile("lidt %0" :: "m"(g_IDT_Descriptor): "memory");
     __asm__ volatile("sti");
 
-    log(INFO, "IDT INITIALIZED!, Base: %p\n", g_IDT_Descriptor.ptr);
+    log(INFO, "IDT - Initialized!, Base: %p\n", g_IDT_Descriptor.ptr);
 }

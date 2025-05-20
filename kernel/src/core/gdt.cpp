@@ -59,5 +59,5 @@ void GDT::Init()
 
     __asm__ volatile("sti");
 
-    log(INFO, "GDT INITIALIZED!, Base: %p\n", g_GDT_Descriptor.ptr);
+    log(INFO, "GDT - Initialized!, Base: %p\n", g_GDT_Descriptor.ptr);
 }
