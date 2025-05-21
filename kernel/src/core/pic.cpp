@@ -61,10 +61,14 @@ void PIC::Mask(uint8_t irq)
     uint8_t value;
 
     if (irq < 8)
+    {
         port = PIC1_DATA;
+    }
     else
+    {
         port = PIC2_DATA;
         irq -= 8;
+    }
     
     value = IO::InB(port) | (1 << irq);
     IO::OutB(port, value);
@@ -76,10 +80,14 @@ void PIC::Unmask(uint8_t irq)
     uint8_t value;
 
     if (irq < 8)
+    {
         port = PIC1_DATA;
-    else
+    }
+    else 
+    {
         port = PIC2_DATA;
         irq -= 8;
+    }
     
     value = IO::InB(port) & ~(1 << irq);
     IO::OutB(port, value);
@@ -95,7 +103,9 @@ void PIC::Disable()
 void PIC::SendEOI(uint8_t irq)
 {
     if (irq >= 8)
+    {
         IO::OutB(PIC2_COMMAND, PIC_EOI);
+    }
 
     IO::OutB(PIC1_COMMAND, PIC_EOI);
 }

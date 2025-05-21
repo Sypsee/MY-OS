@@ -1,12 +1,13 @@
-# This is hobby os (MY OS or something)
+## This is a hobby os
 
-## Currently has :-
+### Currently has :-
 * **GDT**
-
-## Adding
 * **IDT**
 
-## Tools used
+### Working on :-
+* **Hardware Interrupts**
+
+### Tools used :-
 * **LIMINE**: <https://github.com/limine-bootloader/limine>
 * **FLANTERM**: <https://codeberg.org/mintsuki/flanterm>
 * **PRINTF IMPLEMENTATION**: <https://github.com/eyalroz/printf/>
