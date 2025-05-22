@@ -6,7 +6,10 @@
 #include "core/io.h"
 #include "core/gdt.h"
 #include "core/idt.h"
+#include "core/pic.h"
 #include "core/irq.h"
+
+#include "core/IRHandlers/RTC.h"
 
 #include <utils/logger.h>
 
@@ -38,10 +41,11 @@ volatile LIMINE_REQUESTS_END_MARKER;
 static void hcf()
 {
 	for (;;)
-		__asm__ volatile("hlt");
+		asm volatile("hlt");
 }
 
 flanterm_context *g_ft_ctx = nullptr;
+limine_framebuffer *g_fb = nullptr;
 
 // for printf
 void putchar_(char c) {
@@ -56,15 +60,14 @@ extern "C" void kmain()
 		hcf();
 	}
 
-	limine_framebuffer *fb = framebuffer_request.response->framebuffers[0];
-
+	g_fb = framebuffer_request.response->framebuffers[0];
 	g_ft_ctx = flanterm_fb_init(
 		nullptr,
 		nullptr,
-		static_cast<uint32_t*>(fb->address), fb->width, fb->height, fb->pitch,
-		fb->red_mask_size, fb->red_mask_shift,
-		fb->green_mask_size, fb->green_mask_shift,
-		fb->blue_mask_size, fb->blue_mask_shift,
+		reinterpret_cast<uint32_t*>(g_fb->address), g_fb->width, g_fb->height, g_fb->pitch,
+		g_fb->red_mask_size, g_fb->red_mask_shift,
+		g_fb->green_mask_size, g_fb->green_mask_shift,
+		g_fb->blue_mask_size, g_fb->blue_mask_shift,
 		nullptr,
 		nullptr, nullptr,
 		nullptr, nullptr,
@@ -82,6 +85,10 @@ extern "C" void kmain()
 	GDT::Manager::Init();
 	IDT::Manager::Init();
 	IRQ::Init();
+	PIC::Mask(0); // Mask the PIT, no use as of now
+
+	RTC::Init();
+	IRQ::RegisterHandlers(8, RTC::InterruptHandler);
 
 	// greeting text
 	printf("\n\n");
