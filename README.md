@@ -3,9 +3,10 @@
 ### Currently has :-
 * **GDT**
 * **IDT**
+* **PIC**
 
 ### Working on :-
-* **Hardware Interrupts**
+* **Hardware Interrupts(PIT &* KEYBOARD)**
 
 ### Tools used :-
 * **LIMINE**: <https://github.com/limine-bootloader/limine>

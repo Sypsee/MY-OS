@@ -2,71 +2,61 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) GDT_Entry
-{
+namespace GDT {
+struct [[gnu::packed]] Entry {
     uint16_t limit_low;
     uint16_t base_low;
     uint8_t base_middle;
     uint8_t access;
     uint8_t flags_limit_high;
     uint8_t base_high;
+
+    static constexpr Entry Create(uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+        return Entry{
+            static_cast<uint16_t>(limit & 0xFFFF),
+            static_cast<uint16_t>(base & 0xFFFF),
+            static_cast<uint8_t>((base >> 16) & 0xFF),
+            access,
+            static_cast<uint8_t>(((limit >> 16) & 0x0F) | (flags & 0xF0)),
+            static_cast<uint8_t>((base >> 24) & 0xFF)
+        };
+    }
 };
 
-struct __attribute__((packed)) GDT_Descriptor
-{
+struct [[gnu::packed]] Descriptor {
     uint16_t limit;
-    GDT_Entry* ptr;
+    Entry* ptr;
 };
 
-enum GDT_ACCESS
-{
-    CODE_READABLE = 0x02,
-    DATA_WRITABLE = 0x02,
-
-    CODE_CONFORMING = 0x04,
-    DATA_DIRECTION_NORMAL = 0x00,
-    DATA_DIRECTION_DOWN = 0x04,
-
-    DATA_SEGMENT = 0x10,
-    CODE_SEGMENT = 0x18,
-
-    DESCRIPTOR_TSS = 0x00,
-
-    GDT_FLAG_RING0 = 0x00,
-    GDT_FLAG_RING1 = 0x20,
-    GDT_FLAG_RING2 = 0x40,
-    GDT_FLAG_RING3 = 0x60,
-
-    GDT_FLAG_PRESENT = 0x80,
+enum Access : uint8_t {
+    CodeReadable = 0x02,
+    DataWritable = 0x02,
+    CodeConforming = 0x04,
+    DataDirectionNormal = 0x00,
+    DataDirectionDown = 0x04,
+    DataSegment = 0x10,
+    CodeSegment = 0x18,
+    DescriptorTSS = 0x00,
+    Ring0 = 0x00,
+    Ring1 = 0x20,
+    Ring2 = 0x40,
+    Ring3 = 0x60,
+    Present = 0x80
 };
 
-enum GDT_FLAGS
-{
-    BIT_64 = 0x20,
-    BIT_32 = 0x40,
-    BIT_16 = 0x00,
-
-    GRANULARITY_1B = 0x00,
-    GRANULARITY_4K = 0x80,
+enum Flags : uint8_t {
+    Bit64 = 0x20,
+    Bit32 = 0x40,
+    Bit16 = 0x00,
+    Granularity1B = 0x00,
+    Granularity4K = 0x80
 };
 
-#define GDT_LIMIT_LOW(limit) (limit & 0xFFFF)
-#define GDT_BASE_LOW(base) (base & 0xFFFF)
-#define GDT_BASE_MIDDLE(base) ((base >> 16) & 0xFF)
-#define GDT_FLAGS_LIMIT_HIGH(limit, flags) (((limit >> 16) & 0xF) | (flags & 0xF0))
-#define GDT_BASE_HIGH(base) ((base >> 24) & 0xFF)
-
-#define GDT_ENTRY(base, limit, access, flags) { \
-    GDT_LIMIT_LOW(limit), \
-    GDT_BASE_LOW(base), \
-    GDT_BASE_MIDDLE(base), \
-    access, \
-    GDT_FLAGS_LIMIT_HIGH(limit, flags), \
-    GDT_BASE_HIGH(base), \
-}
-
-class GDT
-{
+class Manager {
 public:
     static void Init();
+private:
+    static Entry gdt[];
+    static Descriptor descriptor;
 };
+}

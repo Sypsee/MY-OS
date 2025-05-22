@@ -1,63 +1,58 @@
 #include "gdt.h"
 #include <utils/logger.h>
 
-GDT_Entry g_GDT[] =
+namespace GDT {
+Entry Manager::gdt[] =
 {
     // NULL DESCRIPTOR
-    GDT_ENTRY(0, 0, 0, 0),
+    Entry::Create(0, 0, 0, 0),
 
     // CODE SEG
-    GDT_ENTRY
-    (
+    Entry::Create(
         0,
         0xFFFFF,
-        GDT_FLAG_PRESENT | GDT_FLAG_RING0 | CODE_SEGMENT | CODE_READABLE,
-        BIT_64 | GRANULARITY_4K
+        Access::Present | Access::Ring0 | Access::CodeSegment | Access::CodeReadable,
+        Flags::Bit64 | Flags::Granularity4K
     ),
 
     // DATA SEG
-    GDT_ENTRY
-    (
+    Entry::Create(
         0,
         0xFFFFF,
-        GDT_FLAG_PRESENT | GDT_FLAG_RING0 | DATA_SEGMENT | DATA_WRITABLE,
-        BIT_64 | GRANULARITY_4K
+        Access::Present | Access::Ring0 | Access::DataSegment | Access::DataWritable,
+        Flags::Bit64 | Flags::Granularity4K
     ),
 };
 
-GDT_Descriptor g_GDT_Descriptor = {
-    sizeof(g_GDT) - 1,
-    g_GDT
+Descriptor Manager::descriptor = {
+    sizeof(gdt) - 1,
+    gdt
 };
 
-void GDT::Init()
-{
-    __asm__ volatile("cli");
-    __asm__ volatile("lgdt %0" :: "m"(g_GDT_Descriptor): "memory");
-    __asm__ volatile(
+void Manager::Init() {
+    asm volatile("cli");
+    asm volatile("lgdt %0" :: "m"(descriptor): "memory");
+    asm volatile(
         "pushq $0x08\n"
         "lea 1f(%%rip), %%rax\n"
         "pushq %%rax\n"
         "lretq\n"
         "1:\n"
-        :
-        :
-        : "rax", "memory"
+        ::: "rax", "memory"
     );
 
-    __asm__ volatile(
+    asm volatile(
         "mov $0x10, %%ax\n"
         "mov %%ax, %%ds\n"
         "mov %%ax, %%es\n"
         "mov %%ax, %%fs\n"
         "mov %%ax, %%gs\n"
         "mov %%ax, %%ss\n"
-        :
-        :
-        : "memory"
+        ::: "memory"
     );
 
-    __asm__ volatile("sti");
+    asm volatile("sti");
 
-    log(INFO, "GDT - Initialized!, Base: %p\n", g_GDT_Descriptor.ptr);
+    log(INFO, "GDT - Initialized!, Base: %p\n", descriptor.ptr);
+}
 }
