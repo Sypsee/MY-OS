@@ -3,12 +3,12 @@
 #include "core/irq.h"
 
 struct DateTime {
-    uint8_t second=-1;
-    uint8_t minute=-1;
-    uint8_t hour=-1;
-    uint8_t day=-1;
-    uint8_t month=-1;
-    uint8_t year=-1;
+    uint8_t second=0;
+    uint8_t minute=0;
+    uint8_t hour=0;
+    uint8_t day=0;
+    uint8_t month=0;
+    uint8_t year=0;
 };
 
 class RTC {
@@ -20,7 +20,7 @@ public:
     static uint8_t getDay();
     static uint8_t getMonth();
     static uint8_t getYear();
-    static DateTime getDateTime();
+    static DateTime &getDateTime();
 
     static void InterruptHandler(StackFrame *frame);
 

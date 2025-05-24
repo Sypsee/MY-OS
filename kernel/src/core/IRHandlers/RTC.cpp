@@ -1,7 +1,5 @@
 #include "RTC.h"
-
 #include "core/io.h"
-#include <utils/logger.h>
 
 DateTime RTC::dateTime = {};
 
@@ -15,9 +13,6 @@ void RTC::Init() {
 	uint8_t prev_conf = GetRTCRegister(0xB);
 	IO::OutB(0x70, 0xB);
 	IO::OutB(0x71, prev_conf | 0x10); // enable UEI(Update Ended Interrupt) mode
-
-    // for some reason its not cleared?
-    GetRTCRegister(0x0C);
 }
 
 void RTC::InterruptHandler(StackFrame *frame) {
@@ -66,6 +61,6 @@ uint8_t RTC::getYear() {
     return dateTime.year;
 }
 
-DateTime RTC::getDateTime() {
+DateTime &RTC::getDateTime() {
     return dateTime;
 }

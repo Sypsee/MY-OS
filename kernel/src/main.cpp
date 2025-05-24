@@ -10,6 +10,7 @@
 #include "core/irq.h"
 
 #include "core/IRHandlers/RTC.h"
+#include "core/IRHandlers/Keyboard.h"
 
 #include <utils/logger.h>
 
@@ -77,22 +78,26 @@ extern "C" void kmain()
 		0
 	);
 
-	if (!IO::Init())
+	if (!IO::Init()) {
 		log(INFO, "Failed to initialize IO(Port)!\n");
-	else
+    }
+	else {
 		log(INFO, "IO(Port) - Initialized!\n");
+    }
 
 	GDT::Manager::Init();
 	IDT::Manager::Init();
 	IRQ::Init();
 	PIC::Mask(0); // Mask the PIT, no use as of now
 
-	RTC::Init();
 	IRQ::RegisterHandlers(8, RTC::InterruptHandler);
+	IRQ::RegisterHandlers(1, Keyboard::InterruptHandler);
+	RTC::Init();
+	Keyboard::Init();
 
 	// greeting text
 	printf("\n\n");
-	printf("\033[92m");
+	printf("\033[93m");
 	printf("<-. (`-')                              (`-').-> \n");
 	printf("	\(OO )_      .->            .->    ( OO)_   \n");
 	printf("),--./  ,-.) ,--.'  ,-.    (`-')----. (_)--\_)  \n");
@@ -102,7 +107,11 @@ extern "C" void kmain()
 	printf("|  |   |  | `-/   /`        '  '-'  '\       / \n");
 	printf("`--'   `--'   `--'           `-----'  `-----'  \n");
 	printf("\033[0m");
-	printf("--- Welcome to MY OS! ---\n\n");
-
+	printf("--- Welcome to MY OS! ---\n");
+	DateTime &dt = RTC::getDateTime();
+    printf("Booted at: %02u-%02u-%02u %02u:%02u:%02u\n\n",
+           dt.day, dt.month, dt.year,
+           dt.hour, dt.minute, dt.second);
+		
 	hcf();
 }

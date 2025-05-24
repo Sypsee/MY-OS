@@ -4,9 +4,10 @@
 * **GDT**
 * **IDT**
 * **PIC**
+* **RTC**
 
 ### Working on :-
-* **Hardware Interrupts(PIT &* KEYBOARD)**
+* **Keyboard [IRQ1]**
 
 ### Tools used :-
 * **LIMINE**: <https://github.com/limine-bootloader/limine>
